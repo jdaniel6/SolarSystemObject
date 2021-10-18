@@ -2,6 +2,10 @@
 import java.util.*;
 import java.io.*;
 import java.nio.file.*;
+//import processing.core.*;
+import java.awt.*;
+import java.awt.geom.*;
+import javax.swing.*;
 public class SolarSystem 
 {
 	Body[] bodies;
@@ -51,12 +55,13 @@ public class SolarSystem
 		}
 		for(int i=0;i<numoo;i++)
 		{
-			if(!(ss.bodies[i].orbits.equals(centre.name)))
+			if((!(ss.bodies[i].orbits.equals(centre.name)))&&(!(ss.bodies[i].orbits.equals("NaN"))))
 				for(int j=0;j<mainbody.size();j++)
 				{
-					if(ss.bodies[i].orbits.equals(ss.bodies[j].name))
+					//System.out.println(ss.bodies[i].name);
+					if(ss.bodies[i].orbits.equals(ss.bodies[mainbody.get(j)].name))
 					{
-						System.out.println(ss.bodies[i].name);
+						//System.out.println(ss.bodies[i].name);
 						satellites.add(new ArrayList());
 						satellites.get(satellites.size()-1).add(i);	
 						satellites.get(satellites.size()-1).add(mainbody.get(j));
@@ -136,5 +141,59 @@ class Body
 		this.rotp = rotp;
 		this.axial= axial;
 		this.orbi = orbi;
+	}
+}
+
+class drawSystem extends JPanel
+{
+	Body[] bodies;
+	JFrame mainFrame;
+	private List<Object> shapes = new ArrayList<>();
+	JPanel mainPanel;
+	public drawSystem(Body[] bodies)
+	{
+		this.bodies=bodies;
+		mainFrame = new JFrame();
+		mainPanel = new JPanel();
+		mainFrame.setBackground(Color.BLACK);
+		mainFrame.setPreferredSize(new Dimension(1280,700));
+	}
+	@Override
+	protected void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		int x=0,y=0;
+		for(Object s : shapes)
+		{
+			//(//Circl = new Circle(x,y);			
+			((Circle)s).draw(g);
+			x+=100;
+			y+=100;
+		}
+	}
+	private void addCircle()
+	{
+		int x=0,y=0;
+		shapes.add(new Circle(x,y));
+		repaint();
+	}
+	public void main()
+	{
+		//frame.add;
+	}	
+}
+class Circle
+{
+	int x,y;
+	public Circle(int x, int y){
+		this.x=x;
+		this.y=y;
+	}
+	public void draw(Graphics g)
+	{
+		Graphics2D g2d = (Graphics2D)g;
+		Ellipse2D.Double circle = new Ellipse2D.Double(x,y,10,10);
+		g2d.setColor(Color.WHITE);
+		g2d.fill(circle);
 	}
 }
