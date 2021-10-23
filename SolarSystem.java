@@ -1,9 +1,11 @@
 //very useful answer to arrays and null reference provided by https://answers.unity.com/questions/720055/array-has-length-but-is-null.html
 import java.util.*;
+import java.util.List;
 import java.io.*;
 import java.nio.file.*;
 //import processing.core.*;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.*;
 import javax.swing.*;
 public class SolarSystem 
@@ -123,6 +125,15 @@ public class SolarSystem
 			solarSystem.toString(solarSystem.bodies[index]);
 		}
 		solarSystem.createSolarSystem(solarSystem);
+		JFrame mainFrame;
+		//JPanel mainPanel;
+		mainFrame = new JFrame();		
+		//mainPanel = new JPanel();
+		mainFrame.setContentPane(new drawSystem(solarSystem.bodies));
+		mainFrame.getContentPane().setBackground(Color.BLACK);
+		mainFrame.setSize(1280,700);
+		
+		mainFrame.setVisible(true);
 	}
 }
 class Body 
@@ -144,56 +155,84 @@ class Body
 	}
 }
 
+//second experimental section starts
+
+
 class drawSystem extends JPanel
 {
 	Body[] bodies;
-	JFrame mainFrame;
+	Body centre;
 	private List<Object> shapes = new ArrayList<>();
-	JPanel mainPanel;
+	
+	int x=0,y=350,r=10;
+	double diameter=0, orbitRadius=0;
 	public drawSystem(Body[] bodies)
 	{
-		this.bodies=bodies;
-		mainFrame = new JFrame();
-		mainPanel = new JPanel();
-		mainFrame.setBackground(Color.BLACK);
-		mainFrame.setPreferredSize(new Dimension(1280,700));
+		this.bodies=bodies;	
+		for(Body b : bodies)
+		{
+			System.out.println(b.diam);
+			if(b.diam > diameter)
+				diameter=b.diam;
+			if((b.peri+b.aph)>orbitRadius)
+				orbitRadius=(b.peri+b.aph)/2;
+		}
+		System.out.println(diameter);
+		for(Body b : bodies)
+		{
+			if(b.orbits.equals("NaN"))
+			{
+				centre=b;
+				System.out.println(b.diam/diameter);
+				addCircle(x,y,(int)((b.diam/diameter)*500));
+				x+=((b.diam/diameter)*500);
+				break;
+			}
+		}	
+		for(Body b : bodies)
+		{			
+			if(b.orbits.equals(centre.name))
+			{
+				x=(int)((((b.peri+b.aph)/(2*orbitRadius))*1000))+350;
+				//x+=100;
+				System.out.println(x);
+				addCircle(x,y,(int)((b.diam/diameter)*5000));
+			}			
+		}
 	}
 	@Override
 	protected void paintComponent(Graphics g)
 	{
-		super.paintComponent(g);
-		int x=0,y=0;
+		super.paintComponent(g);		
 		for(Object s : shapes)
-		{
-			//(//Circl = new Circle(x,y);			
-			((Circle)s).draw(g);
-			x+=100;
-			y+=100;
+		{			
+			((Circle)s).draw(g);			
 		}
 	}
-	private void addCircle()
+	private void addCircle(int x, int y,int r)
 	{
-		int x=0,y=0;
-		shapes.add(new Circle(x,y));
+		//int x=0,y=0;
+		//int r = 100;
+		shapes.add(new Circle(x,y,r));
 		repaint();
 	}
-	public void main()
-	{
-		//frame.add;
-	}	
 }
 class Circle
 {
-	int x,y;
-	public Circle(int x, int y){
+	int x,y,r;
+	public Circle(int x, int y, int r){
 		this.x=x;
 		this.y=y;
+		this.r=r;
 	}
 	public void draw(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D)g;
-		Ellipse2D.Double circle = new Ellipse2D.Double(x,y,10,10);
+		Ellipse2D.Double circle = new Ellipse2D.Double(x,y,r,r);
 		g2d.setColor(Color.WHITE);
 		g2d.fill(circle);
 	}
 }
+
+
+//second experimental section ends
